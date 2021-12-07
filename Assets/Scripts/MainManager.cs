@@ -17,7 +17,7 @@ public class MainManager : MonoBehaviour
     public GameObject GameOverText;
     
     private bool m_Started = false;
-    private int m_Points;
+    //private int m_Points;
     
     private bool m_GameOver = false;
 
@@ -33,7 +33,7 @@ public class MainManager : MonoBehaviour
 
         MainManager.Instance = this;
 
-        BestScoreText.text = "Best Score: " + GameManager.Instance.PlayerName + ": 0";
+        SetBestScoreText();
 
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
@@ -70,6 +70,7 @@ public class MainManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
+                GameManager.Instance.Score = 0;
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
         }
@@ -77,13 +78,27 @@ public class MainManager : MonoBehaviour
 
     void AddPoint(int point)
     {
-        m_Points += point;
-        ScoreText.text = $"Score : {m_Points}";
+        GameManager.Instance.Score += point;
+        ScoreText.text = $"Score : {GameManager.Instance.Score}";
     }
 
     public void GameOver()
     {
+        GameManager.Instance.SaveBestScore();
+        SetBestScoreText();
         m_GameOver = true;
         GameOverText.SetActive(true);
+    }
+
+    private void SetBestScoreText()
+    {
+        if (GameManager.Instance.bestScore.playerName != null)
+        {
+            BestScoreText.text = "Best Score: " + GameManager.Instance.bestScore.playerName + ": " + GameManager.Instance.bestScore.score;
+        }
+        else
+        {
+            BestScoreText.text = "No best score yet!";
+        }
     }
 }
